@@ -5,22 +5,41 @@
    <script type="text/javascript" src="jquery-3.3.1.min.js"></script>
    <script type="text/javascript" src="knockout-min.js"></script>
    <script type="text/javascript">
-     var indexFile = 'https://s3.amazonaws.com/collaboration.sdr0.com/index.js';
+      var indexFile = 'https://s3.amazonaws.com/collaboration.sdr0.com/index.js';
    
-     var ViewModel = function() {
-       var self = this;
+      var ViewModel = function() {
+         var self = this;
        
-       self.comics = ko.observableArray([]);
-       self.status = ko.observable('initial');
+         self.comics = ko.observableArray([]);
+         self.status = ko.observable('initial');
        
-       return self;
-     };
+         self.load = function() {
+            var settings = {
+               method: 'GET',
+               succeess: function (data, textStatus, jqXHR) {
+                  for (var i = 0, l = data.length; i < l; i++) {
+                     self.comics.push({ title: data[i] });  
+                  }
+                  self.status('loaded');
+               },
+               error: function (jqXHR, textStatus, errorThrown) {
+                  self.status('error');
+               }
+            };
+            
+            self.comics.removeAll();
+            self.status('loading');
+            $.ajax(settings);
+         };
+        
+         return self;
+      };
    
-     var vm = new ViewModel();
+      var vm = new ViewModel();
      
-     $(function() {
-        ko.applyBindings(vm);
-     });
+      $(function() {
+         ko.applyBindings(vm);
+      });
    
    </script>
 </head>
@@ -30,11 +49,26 @@
 
 <p>Select any one of the following to view.</p>
 
+<!-- ko if: status == 'initial' -->
+<h3>Data has not been loaded.</h3>
+<!-- /ko -->
+<!-- ko if: status == 'loading' -->
+<h3>Loading....</h3>
+<!-- /ko -->
+<!-- ko if: status == 'error' -->
+<h3>An error occurred loading the data</h3>
+<!-- /ko -->
 <!-- ko if: status == 'loaded' -->
+<!-- ko if: comics.length == 0 -->
+<h3>There are currently no comics</h3>
+<!-- /ko -->
+<!-- ko if: comics.length != 0 -->
 <ul>
-  <!-- ko foreach: comics --> 
-  <!-- /ko -->
+   <!-- ko foreach: comics -->
+   <li data-bind="text: title"></li>
+   <!-- /ko -->
 </ul>
+<!-- /ko -->
 <!-- /ko -->
 
 </body>
