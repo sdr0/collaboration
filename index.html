@@ -1,0 +1,40 @@
+<html>
+<head>
+   <title>Collaboration</title>
+   <script type="text/javascript" src="jquery-3.3.1.min.js"></script>
+   <script type="text/javascript" src="knockout-min.js"></script>
+   <script type="text/javascript">
+     var indexFile = 
+   
+     var ViewModel = function() {
+       var self = this;
+       
+       self.comics = ko.observableArray([]);
+       self.status = ko.observable('initial');
+       
+       return self;
+     };
+   
+     var vm = new ViewModel();
+     
+     $(function() {
+        ko.applyBindings(vm);
+     });
+   
+   </script>
+</head>
+<body>
+
+<h2>Collaboration</h2>
+
+<p>Select any one of the following to view.</p>
+
+<!-- ko if: status == 'loaded' -->
+<ul>
+  <!-- ko foreach: comics --> 
+  <!-- /ko -->
+</ul>
+<!-- /ko -->
+
+</body>
+</html>
