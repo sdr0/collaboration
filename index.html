@@ -15,6 +15,7 @@
        
          self.load = function() {
             var settings = {
+               url: indexFile,
                method: 'GET',
                succeess: function (data, textStatus, jqXHR) {
                   for (var i = 0, l = data.length; i < l; i++) {
